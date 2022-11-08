@@ -1,37 +1,35 @@
 import kotlin.math.max
 
-fun calculateCommission(cardType: String, amountOfPreviousTransfers: Int = 0, amount: Int): Int {
+fun calculateCommission(amount: Int, cardType: String = "VK Pay", amountOfPreviousTransfers: Int = 0): Int {
     val actionLimit = 75_000
     val minCommission = 35
-    val maestroCommissionPercentage: Float = 0.6f
-    val visaCommissionPercentage: Float = 0.75f
     val totalAmount = amountOfPreviousTransfers + amount;
     val result = when (cardType) {
-        "Mastercard", "Maestro" -> if (totalAmount > actionLimit) (amount * maestroCommissionPercentage / 100).toInt() + 20 else 0
-        "Visa", "Мир" -> max((amount * visaCommissionPercentage / 100).toInt(), minCommission)
+        "Mastercard", "Maestro" -> if (totalAmount > actionLimit) (amount * 0.006).toInt() + 20 else 0
+        "Visa", "Мир" -> max((amount * 0.0075).toInt(), minCommission)
         else -> 0
     }
     return result
 }
 
-fun printCalculation(cardType: String, amountOfPreviousTransfers: Int = 0, amount: Int) {
+fun printCalculation(amount: Int, cardType: String = "VK Pay", amountOfPreviousTransfers: Int = 0) {
     println(
         "Сумма перевода: $amount руб. Тип карты: $cardType Сумма предыдущих переводов: $amountOfPreviousTransfers руб. Комиссия: ${
             calculateCommission(
+                amount,
                 cardType,
-                amountOfPreviousTransfers,
-                amount
+                amountOfPreviousTransfers
             )
         } руб."
     )
 }
 
 fun main() {
-    printCalculation("Mastercard", 0, 50_000)
-    printCalculation("Mastercard", 0, 90_000)
-    printCalculation("Maestro", 30_000, 50_000)
-    printCalculation("Visa", 0, 50_000)
-    printCalculation("Мир", 30_000, 50_000)
-    printCalculation("Мир", 0, 100)
-    printCalculation("VK Pay", 10_000, 12_000)
+    printCalculation(50_000, "Mastercard")
+    printCalculation(90_000, "Mastercard")
+    printCalculation(50_000, "Maestro", 30_000)
+    printCalculation(50_000, "Visa")
+    printCalculation(50_000, "Мир", 30_000)
+    printCalculation(100, "Мир")
+    printCalculation(10_000)
 }
